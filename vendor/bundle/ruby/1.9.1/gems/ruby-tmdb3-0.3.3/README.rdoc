@@ -1,0 +1,106 @@
+= ruby-tmdb3
+
+ruby-tmdb3 is an ActiveRecord-style API wrapper for {TheMovieDB.org (TMDb)}[http://www.themoviedb.org/]. ruby-tmdb3 uses tmdb's API v3 and is designed to streamline common tasks associated with finding information about movies and cast members.
+  
+=== Examples
+
+  require 'rubygems'
+  require 'ruby-tmdb3'
+  
+  # setup your API key
+  Tmdb.api_key = "t478f8de5776c799de5a"
+  
+  # setup your default language
+  Tmdb.default_language = "en"
+  
+  @movie = TmdbMovie.find(:title => "Iron Man", :limit => 1)
+  # => <OpenStruct>
+  
+  @movie.title
+  # => "Iron Man"
+  
+=== Installation
+
+For ease of use ruby-tmdb3 is packaged as a Rubygem. Installing it is as simple as:
+
+  gem install ruby-tmdb3
+  
+=== Usage
+
+There are 3 main methods you can use to get information about movies and cast members:
+
+==== TmdbMovie.find([:id, :imdb, :title, :limit, :expand_results, :language])
+
+Find information about an individual movie, or a set of movies that share a similar title, eg:
+
+  TmdbMovie.find(:title => "fight club", :limit => 10, :expand_results => true, :language => "en")
+  
+Parameters:
+
+[:id]              Specifies an individual movie via it's TMDb id
+[:title]           Specifies a query string to look for in the movie titles
+[:imdb]            Specifies an individual movie via it's IMDB id
+[:limit]           Specifies the maximum number of results to be returned
+[:expand_results]  The TMDb API by default returns only partial info for any API method that can return multiple results. When :expand_results is set to true ruby-tmdb3 automatically makes extra API calls to fetch the full information for each item. This can result in *very* slow requests though. If you only need basic information for a search listing then set this to false. Defaults to 'true'.
+[:language]        Allows you to override the default API language on a per-query basis.
+
+You must supply at least one of :id, :title, or :imdb. All other parameters are optional.
+
+==== TmdbCast.find([:id, :name, :limit, :expand_results, :language])
+
+Find information about an individual cast member, or a set of cast members sharing similar names, eg:
+
+  TmdbCast.find( :id => 123, :name => "Brad", :limit => 1, :expand_results => true)
+  
+[:id]              Specifies an individual cast member via their TMDb id
+[:name]            Specifies a query string to look for in the cast names
+[:limit]           See TmdbMovie
+[:expand_results]  See TmdbMovie
+[:language]        See TmdbMovie
+
+You must supply at least one of :id or :name. All other parameters are optional.
+
+
+=== Usage Examples
+
+Find all movies whose titles match a given string:
+
+  @movies = TmdbMovie.find(:title => 'Iron Man')
+  
+Find the movie most likely to be associated with a given title:
+
+  @movie = TmdbMovie.find(:title => 'Sin City', :limit => 1)
+  
+Find a single movie by it's TMDb ID:
+
+  @movie = TmdbMovie.find(:id => 187)
+  
+Find a single movie by it's IMDB ID:
+
+  @movie = TmdbMovie.find(:imdb => 'tt0401792')
+  
+Find all cast members whose names match a given string:
+
+  @actors = TmdbCast.find(:name => 'Fred')
+  
+Find an individual cast member via their TMDb ID:
+
+  @actor = TmdbCast.find(:id => 101)
+  
+Get the info for a movie in French:
+
+  @movie = TmdbMovie.find(:title => 'Sin City', :limit => 1, :language => "fr")
+
+
+=== Item information
+  
+To find out more about the information each object offers on retrieved items have a look at the {TMDb API Docs}[http://help.themoviedb.org/kb/api/about-3]. For the most accurate information about the information available have a look at the data directly through ruby-tmdb3 by calling @item.raw_data.inspect
+
+=== Author & Credits
+
+Authors:: {Irio Irineu Musskopf Junior}[mailto:iirineu@gmail.com], {Aaron Gough}[mailto:aaron@aarongough.com]
+Contributors:: {Alex Hayes}[https://github.com/alexhayes], {Alvaro Pereyra Rabanal}[https://github.com/xenda], {Linus Oleander}[https://github.com/oleander], {aristides}[https://github.com/aristides], {Robin Boutros}[https://github.com/niuage], {Loïc Guitaut}[https://github.com/Flink]
+
+Copyright (c) 2012 {Irio Irineu Musskopf Junior}[http://irio.posterous.com/] ({irio.posterous.com}[http://irio.posterous.com/])
+
+Copyright (c) 2010 {Aaron Gough}[http://thingsaaronmade.com/] ({thingsaaronmade.com}[http://thingsaaronmade.com/]), released under the MIT license
